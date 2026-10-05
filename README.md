@@ -1,0 +1,2 @@
+# SPEECH-KEYWORD-DETECTION
+Speech Keyword Detection is a speech analysis application that captures audio through a microphone and converts spoken words into text using speech recognition. The system analyzes the transcribed text and identifies predefined keywords. It provides quick and accurate keyword detection, making it useful for voice commands, monitoring, accessibility, and smart applications.
