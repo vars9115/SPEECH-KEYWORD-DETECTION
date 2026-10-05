@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Keyword Detection</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎤 Speech Keyword Detection</h1>
+
+    <p class="description">
+        Speak into your microphone and the system will detect predefined keywords.
+    </p>
+
+    <div class="card">
+
+        <button id="startButton" onclick="startDetection()">
+            🎙️ Start Listening
+        </button>
+
+        <div id="status">
+            Click the button and start speaking.
+        </div>
+
+        <div class="result">
+
+            <h2>Recognized Speech</h2>
+
+            <p id="speechText">
+                No speech detected yet.
+            </p>
+
+            <h2>Detected Keywords</h2>
+
+            <div id="keywords">
+                No keywords detected.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function startDetection() {
+
+    const button = document.getElementById("startButton");
+    const status = document.getElementById("status");
+    const speechText = document.getElementById("speechText");
+    const keywords = document.getElementById("keywords");
+
+    button.disabled = true;
+    button.innerText = "🎤 Listening...";
+    status.innerText = "Please speak now...";
+
+    speechText.innerText = "Processing...";
+    keywords.innerText = "Searching for keywords...";
+
+    fetch("/detect", {
+        method: "POST"
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        button.disabled = false;
+        button.innerText = "🎙️ Start Listening";
+
+        if (data.success) {
+
+            status.innerText = "Speech processed successfully.";
+
+            speechText.innerText = data.text;
+
+            if (data.keywords.length > 0) {
+
+                keywords.innerHTML = data.keywords
+                    .map(keyword => `<span class="keyword">${keyword}</span>`)
+                    .join("");
+
+            } else {
+
+                keywords.innerText = "No predefined keywords found.";
+            }
+
+        } else {
+
+            status.innerText = data.message;
+
+            speechText.innerText = "Unable to recognize speech.";
+            keywords.innerText = "No keywords detected.";
+        }
+
+    })
+
+    .catch(error => {
+
+        button.disabled = false;
+        button.innerText = "🎙️ Start Listening";
+
+        status.innerText = "An error occurred.";
+        speechText.innerText = "";
+        keywords.innerText = "";
+
+        console.error(error);
+    });
+}
+
+</script>
+
+</body>
+</html>
